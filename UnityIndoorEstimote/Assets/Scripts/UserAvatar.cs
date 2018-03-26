@@ -21,8 +21,9 @@ public class UserAvatar : MonoBehaviour
     void Start()
     {
         user_position = new Vector3();
-        if (waypointmanager)
+        if (waypointmanager) {
             waypoints = waypointmanager.waypointPath;
+        }
         //if(SystemInfo.deviceType == DeviceType.Handheld)
         //{
         //    auto_move = false;
@@ -44,6 +45,18 @@ public class UserAvatar : MonoBehaviour
                 while ((transform.position - nextposition).sqrMagnitude > .2f)
                 {
                     //rotate towards the next target
+
+                    float angle = Vector3.SignedAngle((nextposition - transform.position).normalized, transform.forward, Vector3.up);
+                    if ( angle > 1f)
+                    {
+                        FindObjectOfType<Notification_Voice>().Speak(VoiceDirection.Left);
+                    }
+                    else if (angle < -1f)
+                    {
+                        FindObjectOfType<Notification_Voice>().Speak(VoiceDirection.Right);
+                    }
+
+
                     while (Vector3.SignedAngle((nextposition - transform.position).normalized, transform.forward, Vector3.up) > 1)
                     {
                         transform.Rotate(0, -auto_rotation.value * Time.deltaTime * 20, 0);
@@ -66,8 +79,9 @@ public class UserAvatar : MonoBehaviour
 
                 //increase index to move to next
                 curwaypointindex++;
-                if (curwaypointindex >= waypoints.Length)
+                if (curwaypointindex >= waypoints.Length) {
                     curwaypointindex = 0;
+                }
             }
             //use estimote and phone rotation to move (used for deployment)
             else

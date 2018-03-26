@@ -16,22 +16,26 @@ public class Notification_Vibrate : Notification {
     public override float Notify(float distance, float rotation)
     {
         Debug.Log("VIBRATING");
-        return 3;
+        //return 3;
         //stop any previous vibrations
         StopAllCoroutines();
 
         //player facing wrong way
-        if(rotation < 0)
+        if (rotation < 0) {
             StartCoroutine("Vibrate", vibes[0]);
+        }
         //level 1
-        else if (rotation < .2f)
+        else if (rotation < .2f) {
             StartCoroutine("Vibrate", vibes[1]);
+        }
         //level 2
-        else if (rotation < .7f)
+        else if (rotation < .7f) {
             StartCoroutine("Vibrate", vibes[2]);
+        }
         //level 3
-        else
+        else {
             StartCoroutine("Vibrate", vibes[3]);
+        }
 
 
         //return how long to wait until next notification
@@ -50,7 +54,7 @@ public class Notification_Vibrate : Notification {
         yield return null;
         for (int i = 0; i < vibe.numTimes; i++)
         {
-            Handheld.Vibrate();
+            Vibration.Vibrate(10);
             yield return new WaitForSecondsRealtime(vibe.delay);
         }
     }
