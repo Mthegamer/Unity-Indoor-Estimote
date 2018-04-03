@@ -4,82 +4,148 @@ using UnityEngine;
 
 public class WaypointManager : MonoBehaviour {
     static WaypointManager instance;
-    
-    public float checkpointDistance;        //How far the checkpoint should be from last one
-    public Waypoint[] waypointPath;         //Holds the path the user needs to walk
-    int curWaypointIndex;
-    Waypoint curWaypoint;                  //Where the user is trying to head to
+    [Header("Testing")]
+    public Waypoint testStart;
+    public Waypoint testEnd;
+    public Waypoint[] searchSpace;
+
+    [Header("Checkpoints")]
+    public List<Waypoint> visited = new List<Waypoint>();
     public Checkpoint checkpoint;           //Where the next checkpoint is
 	// Use this for initialization
 	void Start () {
         instance = this;
-        curWaypointIndex = 0;
-        curWaypoint = waypointPath[0];
-
-        //hide everything but the first waypoint
-        waypointPath[0].Show();
-        for(int i = 1; i < waypointPath.Length; i++)
-        {
-            waypointPath[i].Hide();
-        }
-
-        //move the checkpoint to the first waypoint
-        checkpoint.transform.position = curWaypoint.transform.position;
-        currentCheckpointPosition = checkpoint.transform.position;
+        
+        //Waypoint[] pathMaybe;
+        //if (searchSpace.Length > 0)
+        //    pathMaybe = FindPathToWaypoint(testStart, testEnd, searchSpace);
+        //else
+        //    pathMaybe = FindPathToWaypoint(testStart, testEnd);
+        //if (pathMaybe != null)
+        //{
+        //    string s = "";
+        //    for (int i = 0; i < pathMaybe.Length; i++)
+        //    {
+        //        s += "" + pathMaybe[i].name + ", ";
+        //    }
+        //    Debug.Log(s);
+        //}
 	}
-
-    Vector3 currentCheckpointPosition, checkpointToWaypointDisplacement;
-    public void MoveCheckpoint()
-    {
-        checkpointToWaypointDisplacement = curWaypoint.transform.position - currentCheckpointPosition;
-        
-        //if the user is right on top of the current waypoint
-        if (checkpointToWaypointDisplacement.sqrMagnitude < .1f)
-        {
-            //moving to next checkpoint
-            curWaypoint.Hide();  //hide the current waypoint
-            curWaypointIndex++;
-            if (curWaypointIndex >= waypointPath.Length)
-                curWaypointIndex = 0;
-            curWaypoint = waypointPath[curWaypointIndex];
-            curWaypoint.Show();  //show the next waypoint
-
-            //update the distance of checkpoint -> waypoint
-            checkpointToWaypointDisplacement = curWaypoint.transform.position - currentCheckpointPosition;
-        }
-        
-        //if the user is close to next waypoint (less than next checkpointDistance)
-        if (checkpointToWaypointDisplacement.magnitude < checkpointDistance)
-        {
-            //move the checkpoint to the next waypoint
-            checkpoint.transform.position = curWaypoint.transform.position;
-        }
-        //if the user is far from the next waypoint (more than checkpointDistance)
-        else
-        {
-            //move the checkpoint in the direction of the next waypoint
-
-            //get the normalized vector towards next waypoint
-            Vector3 temp = curWaypoint.transform.position - checkpoint.transform.position;
-            temp.y = 0;
-            temp.Normalize();
-
-            //scale by checkPointDistance
-            temp *= checkpointDistance;
-            checkpoint.transform.position = currentCheckpointPosition + temp;
-        }
-
-        //update the current checkpoint position
-        currentCheckpointPosition = checkpoint.transform.position;
-    }
 
     public void SetCheckpointDistance(float newDist)
     {
-        checkpointDistance = newDist;
+        checkpoint.comfortable_distance = newDist;
     }
 
-    public static void ReachedCheckpoint()
+    public static Waypoint[] FindPathToWaypoint(Waypoint start, Waypoint end, Waypoint[] visited = null)
     {
-        instance.MoveCheckpoint();
+        List<Waypoint> searchSpace = new List<Waypoint>();      //hold what we can see
+        List<Waypoint> searching = new List<Waypoint>();        //hold what we currently want to search
+        List<Waypoint> searched = new List<Waypoint>();         //hold what we already searched
+
+        if (visited == null)
+        {
+            //add all the waypoints we have in scene (find shortest global path)
+            searchSpace.AddRange(FindObjectsOfType<Waypoint>());
+        }
+        else
+        {
+            //only add the waypoints we visited (find shortest local path)
+            searchSpace.AddRange(visited);
+        }
+
+        //if start or end arent there, we have error
+        if(!searchSpace.Contains(start))
+        {
+            Debug.LogError("Start not in searchSpace");
+            return null;
+        }
+        if(!searchSpace.Contains(end))
+        {
+            Debug.LogError("End not in searhSpace");
+            return null;
+        }
+
+        //setup temp distance to prepare to find shortest path
+        for(int i = 0; i < searchSpace.Count; i++)
+        {
+            searchSpace[i].tempDistance = 99999;
+        }
+
+        //start at end and set distances of each waypoint as we visit them (Uniform Cost Search through tree)
+        end.tempDistance = 0;
+        searching.Add(end);
+
+        float minDist;
+        Waypoint minWaypoint;
+        while (searching.Count > 0)
+        {
+            //find minimum distance waypoint
+            minDist = searching[0].tempDistance;
+            minWaypoint = searching[0];
+            for (int i = 1; i < searching.Count; i++)
+            {
+                if(searching[i].tempDistance < minDist)
+                {
+                    minDist = searching[i].tempDistance;
+                    minWaypoint = searching[i];
+                }
+            }
+
+            //remove from searching and add neighbors to searching (if in unvisited)
+            searching.Remove(minWaypoint);
+            searched.Add(minWaypoint);
+            for (int i = 0; i < minWaypoint.neighbors.Length; i++)
+            {
+                //if we already searched, dont add
+                if (!searched.Contains(minWaypoint.neighbors[i].waypoint))
+                {
+                    //if its not in searchSpace, dont add
+                    if (searchSpace.Contains(minWaypoint.neighbors[i].waypoint))
+                    {
+                        searching.Add(minWaypoint.neighbors[i].waypoint);
+                        minWaypoint.neighbors[i].waypoint.SetTempDistanceIfSmaller(minWaypoint.tempDistance + Vector3.Distance(minWaypoint.transform.position, minWaypoint.neighbors[i].waypoint.transform.position));
+                    }
+                }
+            }
+        }
+
+        //find shortest path
+        List<Waypoint> finalPath = new List<Waypoint>();
+        Waypoint curWaypoint = start;
+        minWaypoint = start;
+        finalPath.Add(start);
+        //while we havent found end
+        int num = 0;    //used to see if we iterate through much, something went wrong
+        while(finalPath[finalPath.Count-1].tempDistance != 0 && num < 2000)
+        {
+            //find minimum neighbor that is in search space
+            minDist = 99999;
+            for(int i = 0; i < curWaypoint.neighbors.Length; i++)
+            {
+                if(searchSpace.Contains(curWaypoint.neighbors[i].waypoint))
+                {
+                    if(curWaypoint.neighbors[i].waypoint.tempDistance < minDist)
+                    {
+                        minWaypoint = curWaypoint.neighbors[i].waypoint;
+                        minDist = curWaypoint.neighbors[i].waypoint.tempDistance;
+                    }
+                }
+            }
+
+            //set curwaypoint to the minimum and add to final path
+            curWaypoint = minWaypoint;
+            finalPath.Add(curWaypoint);
+            num++;
+        }
+
+        if (num < 2000)
+        {
+            //return shortest path
+            return finalPath.ToArray();
+        }
+
+        //can't find a path
+        return null;
     }
 }

@@ -15,8 +15,6 @@ public class Notification_Vibrate : Notification {
 
     public override float Notify(float distance, float rotation)
     {
-        Debug.Log("VIBRATING");
-        //return 3;
         //stop any previous vibrations
         StopAllCoroutines();
 
@@ -25,11 +23,11 @@ public class Notification_Vibrate : Notification {
             StartCoroutine("Vibrate", vibes[0]);
         }
         //level 1
-        else if (rotation < .2f) {
+        else if (rotation < .4f) {
             StartCoroutine("Vibrate", vibes[1]);
         }
         //level 2
-        else if (rotation < .7f) {
+        else if (rotation < .8f) {
             StartCoroutine("Vibrate", vibes[2]);
         }
         //level 3

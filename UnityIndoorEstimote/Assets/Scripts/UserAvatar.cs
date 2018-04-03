@@ -13,17 +13,14 @@ public class UserAvatar : MonoBehaviour
     public bool auto_move;              //if the user should dmeo the environment and walk automatically
     public Slider auto_speed;           //speed to walk when demoing
     public Slider auto_rotation;
-    public WaypointManager waypointmanager;        //hold the list of waypoints, move to them in order
-    Waypoint[] waypoints;
+
+    public Waypoint[] path;
     int curwaypointindex = 0;
 
     // Use this for initialization
     void Start()
     {
         user_position = new Vector3();
-        if (waypointmanager) {
-            waypoints = waypointmanager.waypointPath;
-        }
         //if(SystemInfo.deviceType == DeviceType.Handheld)
         //{
         //    auto_move = false;
@@ -40,9 +37,9 @@ public class UserAvatar : MonoBehaviour
             //auto move the player through the environment (used for testing)
             if (auto_move)
             {
-                nextposition = waypoints[curwaypointindex].transform.position;
+                nextposition = path[curwaypointindex].transform.position;
                 //move to the next target
-                while ((transform.position - nextposition).sqrMagnitude > .2f)
+                while ((transform.position - nextposition).sqrMagnitude > .1f)
                 {
                     //rotate towards the next target
 
@@ -76,12 +73,6 @@ public class UserAvatar : MonoBehaviour
                     yield return null;
                 }
                 transform.position = nextposition;
-
-                //increase index to move to next
-                curwaypointindex++;
-                if (curwaypointindex >= waypoints.Length) {
-                    curwaypointindex = 0;
-                }
             }
             //use estimote and phone rotation to move (used for deployment)
             else
@@ -101,6 +92,34 @@ public class UserAvatar : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    /// <summary>
+    /// -Get the next waypoint from the user
+    /// -Increase the curwapointindex
+    /// </summary>
+    /// <returns>The next waypoint in path</returns>
+    public Waypoint GetNextWaypoint()
+    {
+
+        //increase index to move to next
+        if(curwaypointindex < path.Length - 1)
+            curwaypointindex++;
+
+        return path[curwaypointindex];
+    }
+
+    public void SetEndWaypoint(Waypoint w)
+    {
+        Waypoint[] newpath = WaypointManager.FindPathToWaypoint(path[curwaypointindex], w, FindObjectOfType<WaypointManager>().visited.ToArray());
+        if(newpath == null)
+        {
+            Debug.Log("Path not valid, continuing on current path");
+            return;
+        }
+        Debug.Log("Changing path");
+        path = newpath;
+        curwaypointindex = 0;
     }
 
     void SetMyValues()
