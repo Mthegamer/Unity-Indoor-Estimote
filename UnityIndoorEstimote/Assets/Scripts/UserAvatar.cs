@@ -14,6 +14,9 @@ public class UserAvatar : MonoBehaviour
     public Slider auto_speed;           //speed to walk when demoing
     public Slider auto_rotation;
 
+    [Header("Lock Movement")]
+    public bool lock_move;
+
     public Waypoint[] path;
     int curwaypointindex = 0;
 
@@ -74,13 +77,32 @@ public class UserAvatar : MonoBehaviour
                 }
                 transform.position = nextposition;
             }
+            else if (lock_move)
+            {
+                //get position from IndoorManager
+                user_position.x = (float)IndoorManager.x;
+                user_position.z = (float)IndoorManager.y;
+
+                if (curwaypointindex >= 1)
+                    transform.position = Vector3.Lerp(transform.position, NearestPointOnLine(path[curwaypointindex - 1].transform.position, path[curwaypointindex].transform.position, user_position), .02f);
+                else
+                    transform.position = Vector3.Lerp(transform.position, user_position, .02f);
+
+                //get the local rotation (in terms of the room) and set the rotation of character
+                user_localRotation = UserRotation.GetRotation();
+                testing.text = string.Format("Rot: {0:0.00}", user_localRotation);
+                transform.rotation = Quaternion.Euler(0, user_localRotation, 0);
+
+                //store where the user is facing
+                user_forward = transform.forward;
+            }
             //use estimote and phone rotation to move (used for deployment)
             else
             {
                 //get position from IndoorManager
-                user_position.x = IndoorManager.UserX;
-                user_position.z = IndoorManager.UserY;
-                transform.position = user_position;
+                user_position.x = (float) IndoorManager.x;
+                user_position.z = (float) IndoorManager.y;
+                transform.position = Vector3.Lerp(transform.position, user_position, .02f);
 
                 //get the local rotation (in terms of the room) and set the rotation of character
                 user_localRotation = UserRotation.GetRotation();
@@ -92,6 +114,22 @@ public class UserAvatar : MonoBehaviour
             }
             yield return null;
         }
+    }
+
+    /// <summary>
+    /// Find the point on the line from start to end that is closest to given pnt
+    /// </summary>
+    /// <param name="start">The start waypoint</param>
+    /// <param name="end">The end waypoint</param>
+    /// <param name="pnt">The point we are comparing</param>
+    /// <returns></returns>
+    Vector3 NearestPointOnLine(Vector3 start, Vector3 end, Vector3 pnt)
+    {
+        Vector3 lineDir = end - start;
+        lineDir.Normalize(); //this needs to be a unit vector
+        Vector3 v = pnt - start;
+        float d = Vector3.Dot(v, lineDir);
+        return start + lineDir * d;
     }
 
     /// <summary>

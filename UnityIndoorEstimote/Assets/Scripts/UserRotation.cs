@@ -13,8 +13,7 @@ public class UserRotation : MonoBehaviour {
     /// <returns></returns>
     public static float GetRotation()
     {
-        return instance.currentRotation;
-        float value = instance.currentRotation;
+        float value = currentRotation;
         value -= RoomManager.RoomNorth;
         if (value < 0)
             value += 360;
@@ -26,7 +25,7 @@ public class UserRotation : MonoBehaviour {
 
     public Transform measurePoint;
     Gyroscope gyro;
-    float currentRotation;
+    public static float currentRotation;
     List<MeshRenderer> meshRenderers;
     // Use this for initialization
     void Start () {

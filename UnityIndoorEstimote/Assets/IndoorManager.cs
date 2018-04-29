@@ -7,14 +7,14 @@ using UnityEngine.UI;
 public class IndoorManager : MonoBehaviour
 {
     static IndoorManager instance;
-    public static float UserX { get { return (float)instance.x; } }
+   /* public static float UserX { get { return (float)instance.x; } }
     public static float UserY { get { return (float)instance.y; } }
     public static bool InRoom {
         get {
             if (!instance)
                 return false;
             return instance.x != 0 || instance.y != 0;
-        } }
+        } }*/
 
     public Text text;
 
@@ -27,7 +27,7 @@ public class IndoorManager : MonoBehaviour
         indoorManager.Start("unity-estimote-integration-g47", "22c52e95562a9bfbe6ad2ecd2f72d266", "3rd-floor-stairs");
     }
 
-    double x, y;
+    public static double x, y;
 	void Update ()
 	{
 		if (indoorManager.IsInsideLocation ()) {

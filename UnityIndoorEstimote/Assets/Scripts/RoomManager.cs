@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class RoomManager : MonoBehaviour {
     static RoomManager instance;
-    public static float RoomNorth { get { return instance.CurrentRoomNorth; } }
+    public static float RoomNorth { get { return CurrentRoomNorth; } }
 
     //where north is in local coordinates
-    public float CurrentRoomNorth;
+    public static float CurrentRoomNorth;
 	// Use this for initialization
 	void Start () {
         instance = this;
