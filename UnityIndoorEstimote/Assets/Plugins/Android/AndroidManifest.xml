@@ -10,6 +10,7 @@
       </intent-filter>
       <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
     </activity>
+    <activity android:name="com.example.guitar.vibratewatchpebble.PebbleActivity"/>
     <meta-data android:name="unity.build-id" android:value="60f000f3-2734-40ca-9058-f91a3f2ac734" />
     <meta-data android:name="unity.splash-mode" android:value="0" />
     <meta-data android:name="unity.splash-enable" android:value="True" />

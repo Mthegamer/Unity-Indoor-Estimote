@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class UserAvatar : MonoBehaviour
+public class UserAvatar : User
 {
-    public static Vector3 user_position;
-    public static float user_localRotation;
-    public static Vector3 user_forward;
-
     public Text testing;
     [Header("Auto Move")]
     public bool auto_move;              //if the user should dmeo the environment and walk automatically
@@ -17,8 +13,6 @@ public class UserAvatar : MonoBehaviour
     [Header("Lock Movement")]
     public bool lock_move;
 
-    public Waypoint[] path;
-    int curwaypointindex = 0;
 
     // Use this for initialization
     void Start()

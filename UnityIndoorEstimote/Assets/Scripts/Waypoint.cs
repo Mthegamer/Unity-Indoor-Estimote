@@ -106,14 +106,15 @@ public class Waypoint : MonoBehaviour {
             GetComponent<SpriteRenderer>().color = Color.yellow;
         else
             GetComponent<SpriteRenderer>().color = Color.red;
+
+        GetComponent<SpriteRenderer>().sortingOrder = 0;
     }
 
     public void Show()
     {
         GetComponent<SpriteRenderer>().color = Color.green;
+        GetComponent<SpriteRenderer>().sortingOrder = 10;
     }
-
-
 }
 
 [System.Serializable]

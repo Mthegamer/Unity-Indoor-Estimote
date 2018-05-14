@@ -8,6 +8,7 @@ using UnityEngine.UI;
 /// When the user gets close to the checkpoint, it is moved in WaypointManager
 /// </summary>
 public class Checkpoint : MonoBehaviour {
+
     //use these to vibrate watch to tell user how close they are
     float distanceOffset;       //change delay between Vibes
     float rotationOffset;       //change Vibe
@@ -42,9 +43,9 @@ public class Checkpoint : MonoBehaviour {
     private void Update()
     {
         //get distance from player and their rotation compared to where it should be
-        temp = transform.position - UserAvatar.user_position;
+        temp = transform.position - User.user_position;
         distanceOffset = temp.magnitude;
-        rotationOffset = Vector3.Dot(temp, UserAvatar.user_forward);
+        rotationOffset = Vector3.Dot(temp, User.user_forward);
 
         //if close to the checkpoint, move the checkpoint
         if (temp.sqrMagnitude < radiusSquared)

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class UserRotation : MonoBehaviour {
     static UserRotation instance;
+    static float offset = 0;
     /// <summary>
     /// Return the room-local rotation of the phone from 0-360: North = 1, South = -1
     /// </summary>
@@ -19,9 +20,10 @@ public class UserRotation : MonoBehaviour {
             value += 360;
         else if (value >= 360)
             value -= 360;
-        return value;
+        return value + offset;
     }
 
+    public void SetOffset(float f) { offset = f; }
 
     public Transform measurePoint;
     Gyroscope gyro;
