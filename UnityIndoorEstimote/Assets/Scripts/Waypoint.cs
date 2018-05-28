@@ -14,7 +14,7 @@ public class Waypoint : MonoBehaviour {
     public void SetTempDistanceIfSmaller(float newDist)
     {
         if (newDist < tempDistance)
-            tempDistance = newDist;
+        tempDistance = newDist;
     }
 
     private void Awake()
@@ -31,13 +31,21 @@ public class Waypoint : MonoBehaviour {
     {
         WaypointManager wm = FindObjectOfType<WaypointManager>();
         if(!wm.visited.Contains(this))
-            wm.visited.Add(this);
+        wm.visited.Add(this);
         visited = true;
     }
 
     public void OnMouseDown()
     {
-        FindObjectOfType<UserAvatar>().SetEndWaypoint(this);
+        try
+        {
+            FindObjectOfType<UserAvatar>().SetEndWaypoint(this);
+
+        }
+        catch(System.Exception e)
+        {
+
+        }
     }
 
     public void FindNeighbors()
@@ -47,7 +55,7 @@ public class Waypoint : MonoBehaviour {
         for(int i = 0; i < neighbors.Length; i++)
         {
             if (neighbors[i].preset)
-                temp.Add(neighbors[i]);
+            temp.Add(neighbors[i]);
         }
 
         //raycast in each direction to find neighbors
@@ -61,7 +69,7 @@ public class Waypoint : MonoBehaviour {
             {
                 newNeigh = new Neighbor(hit.collider.gameObject.GetComponent<Waypoint>(), false);
                 if (!temp.Contains(newNeigh))
-                    temp.Add(newNeigh);
+                temp.Add(newNeigh);
             }
         }
         if (Physics.Raycast(transform.position, Vector3.right, out hit, 100))
@@ -71,7 +79,7 @@ public class Waypoint : MonoBehaviour {
             {
                 newNeigh = new Neighbor(hit.collider.gameObject.GetComponent<Waypoint>(), false);
                 if (!temp.Contains(newNeigh))
-                    temp.Add(newNeigh);
+                temp.Add(newNeigh);
             }
         }
         if (Physics.Raycast(transform.position, Vector3.back, out hit, 100))
@@ -81,7 +89,7 @@ public class Waypoint : MonoBehaviour {
             {
                 newNeigh = new Neighbor(hit.collider.gameObject.GetComponent<Waypoint>(), false);
                 if (!temp.Contains(newNeigh))
-                    temp.Add(newNeigh);
+                temp.Add(newNeigh);
             }
         }
         if (Physics.Raycast(transform.position, Vector3.left, out hit, 100))
@@ -91,21 +99,21 @@ public class Waypoint : MonoBehaviour {
             {
                 newNeigh = new Neighbor(hit.collider.gameObject.GetComponent<Waypoint>(), false);
                 if (!temp.Contains(newNeigh))
-                    temp.Add(newNeigh);
+                temp.Add(newNeigh);
             }
         }
 
         //set new neighbors
         neighbors = temp.ToArray();
     }
-    
+
 
     public void Hide()
     {
         if(visited)
-            GetComponent<SpriteRenderer>().color = Color.yellow;
+        GetComponent<SpriteRenderer>().color = Color.yellow;
         else
-            GetComponent<SpriteRenderer>().color = Color.red;
+        GetComponent<SpriteRenderer>().color = Color.red;
 
         GetComponent<SpriteRenderer>().sortingOrder = 0;
     }
