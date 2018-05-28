@@ -8,7 +8,7 @@ public class Vibrate_Pebble : MonoBehaviour {
     public Text text_status;    //show the status on screen in top rights
 	// Use this for initialization
 	void Start () {
-		
+        text_status.text = "";
 	}
 	
 	// Update is called once per frame
@@ -16,12 +16,35 @@ public class Vibrate_Pebble : MonoBehaviour {
 		
 	}
 
-    void Init()
-    {
-        //Initialize Vibrator
-        //Initialize Watch
-    }
 
+    public void TryInit()
+    {
+        text_status.color = Color.white;
+        text_status.text += "Trying to init...\n";
+        try
+        {
+            //instance of Koi plugin
+            AndroidJavaObject androidObject;
+            //Reference to Unity Player
+            AndroidJavaObject unityObject;
+
+
+            AndroidJavaClass unityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            unityObject = unityClass.GetStatic<AndroidJavaObject>("currentActivity");
+
+            AndroidJavaClass androidClass = new AndroidJavaClass("com.kennesaw.guitar.pebblelibrary.VibratePebble");
+            androidObject = androidClass.GetStatic<AndroidJavaObject>("m_instance");
+
+            text_status.text += "~~~ MadeObjectsAndClasses...";
+            text_status.text += "\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n";
+            //androidObject.Call("VibrateWatch");
+            androidObject.Call("InitWatch", unityObject);
+        }
+        catch(System.Exception e)
+        {
+            text_status.text += "" + e.Message + "\n";
+        }
+    }
 
     /// <summary>
     /// Call to send message to android studio to send vibration to pebble
@@ -29,7 +52,7 @@ public class Vibrate_Pebble : MonoBehaviour {
     public void TryVibrate()
     {
         text_status.color = Color.white;
-        text_status.text = "Trying to vibrate Pebble...";
+        text_status.text += "Trying to vibrate...";
 
         //instance of Koi plugin
         AndroidJavaObject androidObject;
@@ -40,12 +63,13 @@ public class Vibrate_Pebble : MonoBehaviour {
         AndroidJavaClass unityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
         unityObject = unityClass.GetStatic<AndroidJavaObject>("currentActivity");
 
-        AndroidJavaClass androidClass = new AndroidJavaClass ("com.example.guitar.vibratewatchpebble.VibratePebble");
-        androidObject = androidClass.GetStatic<AndroidJavaObject>("instance");
+        AndroidJavaClass androidClass = new AndroidJavaClass ("com.kennesaw.guitar.pebblelibrary.VibratePebble");
+        androidObject = androidClass.GetStatic<AndroidJavaObject>("m_instance");
 
-        text_status.text = "MadeObjectsAndClasses...";
+        text_status.text += "MadeObjectsAndClasses...";
+        text_status.text += "\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n";
         //androidObject.Call("VibrateWatch");
-        androidObject.Call("launchAndroidActivity", unityObject);
+        androidObject.Call("VibrateWatch", unityObject);
     }
 
     /// <summary>
@@ -53,8 +77,8 @@ public class Vibrate_Pebble : MonoBehaviour {
     /// </summary>
     public void VibrateSuccess(string message)
     {
-        text_status.color = Color.green;
-        text_status.text = "Successfully vibrated!";
+        text_status.text += "++ Successfully vibrated!";
+        text_status.text += "\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n";
     }
 
     /// <summary>
@@ -62,7 +86,7 @@ public class Vibrate_Pebble : MonoBehaviour {
     /// </summary>
     public void VibrateFail(string error)
     {
-        text_status.color = Color.red;
-        text_status.text = "Error: " + error;
+        text_status.text += "\n -- Error: " + error;
+        text_status.text += "\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n";
     }
 }
