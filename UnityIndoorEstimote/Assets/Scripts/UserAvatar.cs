@@ -40,15 +40,15 @@ public class UserAvatar : User
                 {
                     //rotate towards the next target
 
-                    float angle = Vector3.SignedAngle((nextposition - transform.position).normalized, transform.forward, Vector3.up);
-                    if ( angle > 1f)
-                    {
-                        FindObjectOfType<Notification_Voice>().Speak(VoiceDirection.Left);
-                    }
-                    else if (angle < -1f)
-                    {
-                        FindObjectOfType<Notification_Voice>().Speak(VoiceDirection.Right);
-                    }
+                    //float angle = Vector3.SignedAngle((nextposition - transform.position).normalized, transform.forward, Vector3.up);
+                    //if ( angle > 1f)
+                    //{
+                    //    FindObjectOfType<Notification_Voice>().Speak(VoiceDirection.Left);
+                    //}
+                    //else if (angle < -1f)
+                    //{
+                    //    FindObjectOfType<Notification_Voice>().Speak(VoiceDirection.Right);
+                    //}
 
 
                     while (Vector3.SignedAngle((nextposition - transform.position).normalized, transform.forward, Vector3.up) > 1)

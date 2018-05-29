@@ -24,6 +24,16 @@ public class UserRotation : MonoBehaviour {
     }
 
     public void SetOffset(float f) { offset = f; }
+    public void SetNorth()
+    {
+        float value = currentRotation;
+        value -= RoomManager.RoomNorth;
+        if (value < 0)
+            value += 360;
+        else if (value >= 360)
+            value -= 360;
+        offset = -value;
+    }
 
     public Transform measurePoint;
     Gyroscope gyro;

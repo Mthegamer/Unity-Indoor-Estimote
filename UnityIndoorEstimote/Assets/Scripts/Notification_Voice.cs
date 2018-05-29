@@ -16,7 +16,16 @@ public class Notification_Voice : Notification {
     public override float Notify(float distance, float rotation)
     {
         Debug.Log("VOICING");
-        return 1;
+
+        if (rotation > 1f)
+        {
+            Speak(VoiceDirection.Left);
+        }
+        else if (rotation < -1f)
+        {
+            Speak(VoiceDirection.Right);
+        }
+        return 3;
         //DO ANYTHING USING AMOUNT TO NOTIFY
 
         //return how long to wait until next notification

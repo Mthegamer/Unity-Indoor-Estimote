@@ -31,7 +31,7 @@ public class Waypoint : MonoBehaviour {
     {
         WaypointManager wm = FindObjectOfType<WaypointManager>();
         if(!wm.visited.Contains(this))
-        wm.visited.Add(this);
+            wm.visited.Add(this);
         visited = true;
     }
 

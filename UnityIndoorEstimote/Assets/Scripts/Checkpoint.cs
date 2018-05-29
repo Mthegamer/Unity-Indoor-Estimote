@@ -45,7 +45,7 @@ public class Checkpoint : MonoBehaviour {
         //get distance from player and their rotation compared to where it should be
         temp = transform.position - User.user_position;
         distanceOffset = temp.magnitude;
-        rotationOffset = Vector3.Dot(temp, User.user_forward);
+        rotationOffset = Vector3.SignedAngle(temp, User.user_forward, Vector3.up);
 
         //if close to the checkpoint, move the checkpoint
         if (temp.sqrMagnitude < radiusSquared)

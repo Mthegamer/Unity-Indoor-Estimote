@@ -6,12 +6,15 @@ public class User_ClickToMove : User {
     public float speed = .2f;       //how fast the player should move towards the target
     public float targetDistance = .5f;  //how far the target should move when it is reached
     public GameObject targetObj;    //the red target visual to move when target moves
+    public Transform waypointObj;
 
     Waypoint curWaypoint;           //store the current waypoint moving towards
     Vector3 targetPos;              //store the current target position the player is walking to
     bool moveWaypoint = true;       //store if the waypoint should be moved next frame
 	// Use this for initialization
 	void Start () {
+        targetObj.transform.position = path[0].transform.position;
+        targetPos = targetObj.transform.position;
         curwaypointindex = -1;
         NextTarget();
         transform.position = path[0].transform.position;
@@ -64,6 +67,7 @@ public class User_ClickToMove : User {
             curWaypoint = path[curwaypointindex];
             //show the new waypoint
             curWaypoint.Show();
+            waypointObj.position = curWaypoint.transform.position;
             //dont need to move next time we move target
             moveWaypoint = false;
         }

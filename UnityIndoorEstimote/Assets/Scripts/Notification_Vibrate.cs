@@ -18,21 +18,45 @@ public class Notification_Vibrate : Notification {
         //stop any previous vibrations
         StopAllCoroutines();
 
-        //player facing wrong way
-        if (rotation < 0) {
+        //player facing straight
+        if (Mathf.Abs(rotation) < 10) {
+            Vibrate_Watch.VIBRATE_LEFT(3, 128, 256);
+            Vibrate_Watch.VIBRATE_RIGHT(3, 128, 256);
             StartCoroutine("Vibrate", vibes[0]);
         }
-        //level 1
-        else if (rotation < .4f) {
-            StartCoroutine("Vibrate", vibes[1]);
-        }
-        //level 2
-        else if (rotation < .8f) {
-            StartCoroutine("Vibrate", vibes[2]);
-        }
-        //level 3
-        else {
-            StartCoroutine("Vibrate", vibes[3]);
+        else
+        {
+            if(rotation < 0)
+            {
+                rotation = -rotation;
+                if (rotation < 45)
+                {
+                    Vibrate_Watch.VIBRATE_RIGHT(3, 128, 256);
+                }
+                else if (rotation < 90)
+                {
+                    Vibrate_Watch.VIBRATE_RIGHT(2, 128, 256);
+                }
+                else
+                {
+                    Vibrate_Watch.VIBRATE_RIGHT(1, 128, 256);
+                }
+            }
+            else
+            {
+                if (rotation < 45)
+                {
+                    Vibrate_Watch.VIBRATE_LEFT(3, 128, 256);
+                }
+                else if(rotation < 90)
+                {
+                    Vibrate_Watch.VIBRATE_LEFT(2, 128, 256);
+                }
+                else
+                {
+                    Vibrate_Watch.VIBRATE_LEFT(1, 128, 256);
+                }
+            }
         }
 
 
